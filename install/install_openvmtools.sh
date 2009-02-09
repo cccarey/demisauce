@@ -52,6 +52,12 @@ function checkDependencies()
 # ----------
 
 checkRoot
+
+mount -t iso9660 -o ro /dev/scd0 /media/cdrom0
+if [ ! $? -eq 0 ]; then
+    die "Could not mount VMWare Tools image as cdrom.  Make sure you have setup the VMWare to install tools and try again."
+fi
+
 checkDependencies
 
 if [ ! -d vmwaretools ]; then
@@ -70,10 +76,6 @@ if [ ! $? -eq 0 ]; then
 fi
 echo
 
-mount -t iso9660 -o ro /dev/scd0 /media/cdrom0
-if [ ! $? -eq 0 ]; then
-    die "Could not mount VMWare Tools image as cdrom.  Make sure you have setup the VMWare to install tools and try again."
-fi
 echo -n "Extracting VMwareTools tar ball..."
 tar xfz /media/cdrom0/VMwareTools-*.tar.gz
 if [ ! $? -eq 0 ]; then
@@ -106,5 +108,7 @@ mv -f open-vm-tools-*/modules/linux/*.tar vmware-tools-distrib/lib/modules/sourc
 
 cd vmware-tools-distrib
 ./vmware-install.pl --default
+
+reboot
 
 
